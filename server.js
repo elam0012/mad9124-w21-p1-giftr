@@ -6,7 +6,7 @@ const debug = createDebug('week9:httpServer')
 
 const httpServer = http.createServer(app)
 
-const port = process.env.PORT || 3030
+const port = process.env.PORT || 3000
 httpServer.listen(port, () => {
   debug(`HTTP server listening on port ${port}`)
 })

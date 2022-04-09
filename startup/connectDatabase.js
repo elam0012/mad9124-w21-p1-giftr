@@ -4,7 +4,7 @@ const debug = createDebug('week9:db')
 
 export default function () {
   mongoose
-    .connect('mongodb://localhost:27017/mad9124', { useNewUrlParser: true })
+    .connect('mongodb://localhost:27017/authentication', { useNewUrlParser: true })
     .then(() => {
       debug('Successfully connected to MongoDB ...')
     })

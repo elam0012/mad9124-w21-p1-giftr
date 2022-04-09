@@ -19,6 +19,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "debug": "^4.3.3",
     "express": "^4.17.3",
     "express-mongo-sanitize": "^2.2.0",
