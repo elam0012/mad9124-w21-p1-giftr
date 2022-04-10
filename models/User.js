@@ -42,6 +42,13 @@ schema.pre('save', async function(next) {
   next()
 })
 
+schema.methods.toJSON = function () {
+  const obj = this.toObject()
+  delete obj.password
+  delete obj.__v
+  return obj
+}
+
 const Model = mongoose.model('User', schema) // factory function returns a class
 
 export default Model

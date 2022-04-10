@@ -4,6 +4,7 @@ import User from '../../models/User.js'
 import sanitizeBody from '../../middleware/sanitizeBody.js'
 import createDebug from 'debug'
 import express from 'express'
+import authenticate from '../../middleware/auth.js'
 
 const debug = createDebug('week8:auth')
 const router = express.Router()
@@ -60,6 +61,23 @@ router.post('/tokens', sanitizeBody, async (req, res) => {
   }
 
   res.status(201).send({data: {token: user.generateAuthToken()}})
+})
+
+// Get the currently logged-in user
+
+// router.get('/users/me', async (req, res) => {
+
+  // Get the JWT from the request header
+  // Validate the JWT
+  // Load the User document from the database using the `_id` in the JWT
+  // Remember to redact sensitive data like the user's password
+  // Send the data back to the client.
+
+// })
+
+router.get('/users/me', authenticate, async (req, res) => {
+  const user = await User.findById(req.user._id)
+  res.send({ data: user })
 })
 
 export default router
