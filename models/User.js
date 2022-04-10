@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import mongoose from 'mongoose'
+import uniqueValidator from 'mongoose-unique-validator'
+import validator from "validator"
 
 const saltRounds = 14
 const jwtSecretKey = 'superSecureSecret'
@@ -13,10 +15,18 @@ const schema = new mongoose.Schema({
     trim: true,
     maxlength: 512,
     required: true,
-    unique: true
+    unique: true,
+    validate: {
+      validator: value => validator.isEmail(value),
+      message: props => `${props.value} is not a valid email address.`
+    }
   },
-  password: {type: String, trim: true, maxlength: 70, required: true}
-})
+  password: {type: String, trim: true, maxlength: 70, required: true},
+
+},
+{
+  timestamps: true
+  })
 
 schema.methods.generateAuthToken = function() {
   const payload = {uid: this._id}
@@ -48,6 +58,13 @@ schema.methods.toJSON = function () {
   return obj
 }
 
-const Model = mongoose.model('User', schema) // factory function returns a class
+schema.plugin(uniqueValidator, { // its is not working
+  message: props =>
+    props.path === 'email'
+      ? `The email address '${props.value}' is already registered.`
+      : `The ${props.path} must be unique. '${props.value}' is already in use.`
+})
+
+const Model = mongoose.model('User', schema) 
 
 export default Model
