@@ -20,14 +20,13 @@ const schema = new mongoose.Schema({
 
 schema.methods.generateAuthToken = function() {
   const payload = {uid: this._id}
-  return jwt.sign(payload, jwtSecretKey)
+  return jwt.sign(payload, jwtSecretKey, { expiresIn: '1h', algorithm: 'HS256' })
 }
 
 schema.statics.authenticate = async function(email, password) {
   const user = await this.findOne({email: email})
 
   const badHash = `$2b$${saltRounds}$invalidusernameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
-  // remember if the email did not match, user === null
   const hashedPassword = user ? user.password : badHash
   const passwordDidMatch = await bcrypt.compare(password, hashedPassword)
 
