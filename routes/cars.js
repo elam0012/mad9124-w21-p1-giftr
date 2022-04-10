@@ -2,6 +2,7 @@ import createDebug from 'debug'
 import sanitizeBody from '../middleware/sanitizeBody.js'
 import Car from '../models/Car.js'
 import express from 'express'
+import ResourceNotFoundError from '../exceptions/ResourceNotFound.js'
 
 const debug = createDebug('week9:routes:cars')
 const router = express.Router()
@@ -33,10 +34,10 @@ router.post('/', sanitizeBody, async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const car = await Car.findById(req.params.id).populate('owner')
-    if (!car) throw new Error('Resource not found')
+    if (!car) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
     res.json({ data: formatResponseData(car) })
   } catch (err) {
-    sendResourceNotFound(req, res)
+    next(err)
   }
 })
 
@@ -53,10 +54,10 @@ const update =
           runValidators: true,
         }
       )
-      if (!car) throw new Error('Resource not found')
+      if (!car) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
       res.json({ data: formatResponseData(car) })
     } catch (err) {
-      sendResourceNotFound(req, res)
+      next(err)
     }
   }
 router.put('/:id', sanitizeBody, update(true))
@@ -65,10 +66,10 @@ router.patch('/:id', sanitizeBody, update(false))
 router.delete('/:id', async (req, res) => {
   try {
     const car = await Car.findByIdAndRemove(req.params.id)
-    if (!car) throw new Error('Resource not found')
+    if (!car) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
     res.json({ data: formatResponseData(car) })
   } catch (err) {
-    sendResourceNotFound(req, res)
+    next(err)
   }
 })
 
@@ -89,18 +90,6 @@ function formatResponseData(payload, type = 'cars') {
     const { _id, ...attributes } = resource.toObject()
     return { type, id: _id, attributes }
   }
-}
-
-function sendResourceNotFound(req, res) {
-  res.status(404).send({
-    error: [
-      {
-        status: '404',
-        title: 'Resource does nto exist',
-        description: `We could not find a car with id: ${req.params.id}`,
-      },
-    ],
-  })
 }
 
 export default router
