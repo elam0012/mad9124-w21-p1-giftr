@@ -5,6 +5,8 @@ import carsRouter from './routes/cars.js'
 import peopleRouter from './routes/people.js'
 import connectDatabase from './startup/connectDatabase.js'
 import authRouter from "./routes/auth/index.js"
+import logError from './middleware/logErrors.js'
+import handleError from './middleware/errorHandler.js'
 
 connectDatabase()
 
@@ -18,5 +20,9 @@ app.use(sanitizeMongo())
 app.use('/api/cars', carsRouter)
 app.use('/api/people', peopleRouter)
 app.use('/auth', authRouter)
+
+// Error handlers
+app.use(logError)
+app.use(handleError)
 
 export default app
