@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const schema = new mongoose.Schema({
+export const schema = new mongoose.Schema({
   name: { type: String, trim: true,minlength: 4, maxlength: 64, required: true },
   price: {type: Number, min: 100, default: 1000}, // make sure
   imageUrl: {type: String, maxlength: 1024},
@@ -10,6 +10,6 @@ const schema = new mongoose.Schema({
   },
   
 })
-const Model = mongoose.model('Car', schema)
+const Model = mongoose.model('Gift', schema)
 
 export default Model
