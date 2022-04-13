@@ -41,4 +41,23 @@ router.get('/users/me', authenticate, async (req, res) => {
   res.send({ data: user })
 })
 
+// update the password
+router.patch('/users/me', sanitizeBody, async (req, res) => {
+  try {
+      const document = await Person.findByIdAndUpdate(
+        req.params.id,
+        req.sanitizedBody,
+        {
+          new: true,
+          overwrite: true,
+          runValidators: true,
+        }
+      )
+      if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
+      res.send({ data: formatResponseData(document) })
+    } catch (err) {
+      next(err)
+    }
+})
+
 export default router
