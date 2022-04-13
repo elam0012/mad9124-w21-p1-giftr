@@ -4,14 +4,10 @@ import {Gift} from "../models/index.js"
 import express from 'express'
 import ResourceNotFoundError from '../exceptions/ResourceNotFound.js'
 
-const debug = createDebug('week9:routes:cars')
+const debug = createDebug('week9:routes:gifts')
 const router = express.Router()
 
-router.get('/', async (req, res) => {
-  const collection = await Gift.find().populate('owner')
-  res.send({ data: formatResponseData(collection) })
-})
-
+// create a gift
 router.post('/', sanitizeBody, async (req, res) => {
   let newGift = new Gift(req.sanitizedBody)
   try {
@@ -31,43 +27,31 @@ router.post('/', sanitizeBody, async (req, res) => {
   }
 })
 
-router.get('/:id', async (req, res) => {
+// update a gift
+router.patch('/:giftId', sanitizeBody, async (req, res) => {
   try {
-    const car = await Gift.findById(req.params.id).populate('owner')
-    if (!car) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-    res.json({ data: formatResponseData(car) })
-  } catch (err) {
-    next(err)
-  }
-})
-
-const update =
-  (overwrite = false) =>
-  async (req, res) => {
-    try {
-      const car = await Gift.findByIdAndUpdate(
+      const document = await Person.findByIdAndUpdate(
         req.params.id,
         req.sanitizedBody,
         {
           new: true,
-          overwrite,
+          overwrite: true,
           runValidators: true,
         }
       )
-      if (!car) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-      res.json({ data: formatResponseData(car) })
+      if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
+      res.send({ data: formatResponseData(document) })
     } catch (err) {
       next(err)
     }
-  }
-router.put('/:id', sanitizeBody, update(true))
-router.patch('/:id', sanitizeBody, update(false))
+})
 
-router.delete('/:id', async (req, res) => {
+// Remove a gift
+router.delete('/:giftId', async (req, res) => {
   try {
-    const car = await Gift.findByIdAndRemove(req.params.id)
-    if (!car) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-    res.json({ data: formatResponseData(car) })
+    const gift = await Gift.findByIdAndRemove(req.params.id)
+    if (!gift) throw new ResourceNotFoundError(`We could not find a gift with id: ${req.params.id}`)
+    res.json({ data: formatResponseData(gift) })
   } catch (err) {
     next(err)
   }
@@ -75,11 +59,11 @@ router.delete('/:id', async (req, res) => {
 
 /**
  * Format the response data object according to JSON:API v1.0
- * @param {string} type The resource collection name, e.g. 'cars'
+ * @param {string} type The resource collection name, e.g. 'gifts'
  * @param {Object | Object[]} payload An array or instance object from that collection
  * @returns
  */
-function formatResponseData(payload, type = 'cars') {
+function formatResponseData(payload, type = 'gifts') {
   if (payload instanceof Array) {
     return payload.map((resource) => format(resource))
   } else {
