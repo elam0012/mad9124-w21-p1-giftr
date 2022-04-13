@@ -10,17 +10,17 @@ const router = express.Router()
 // list all people
 router.get('/', async (req, res) => {
   const collection = await Person.find()
-  res.send({ data: formatResponseData(collection) })
+  res.send({ data: collection })
 })
 
 // get details for a person
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const document = await Person.findById(req.params.id)
     if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-    res.json({ data: formatResponseData(document) })
+    res.json({ data:document })
   } catch (err) {
-    next(err)
+    next()
   }
 })
 
@@ -46,7 +46,7 @@ router.post('/', sanitizeBody, async (req, res) => {
 
 const update =
   (overwrite = false) =>
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const document = await Person.findByIdAndUpdate(
         req.params.id,
@@ -58,42 +58,23 @@ const update =
         }
       )
       if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-      res.send({ data: formatResponseData(document) })
+      res.send({ data: document })
     } catch (err) {
-      next(err)
+      next()
     }
   }
 router.put('/:id', sanitizeBody, update(true)) // replace a person
 router.patch('/:id', sanitizeBody, update(false)) // update a person
 
 // remove a person
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const document = await Person.findByIdAndRemove(req.params.id)
     if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-    res.send({ data: formatResponseData(document) })
+    res.send({ data:document })
   } catch (err) {
-    next(err)
+    next()
   }
 })
-
-/**
- * Format the response data object according to JSON:API v1.0
- * @param {string} type The resource collection name, e.g. 'cars'
- * @param {Object | Object[]} payload An array or instance object from that collection
- * @returns
- */
-function formatResponseData(payload, type = 'people') {
-  if (payload instanceof Array) {
-    return payload.map((resource) => format(resource))
-  } else {
-    return format(payload)
-  }
-
-  function format(resource) {
-    const { _id, ...attributes } = resource.toObject()
-    return { type, id: _id, attributes }
-  }
-}
 
 export default router

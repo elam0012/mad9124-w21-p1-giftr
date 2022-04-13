@@ -12,7 +12,7 @@ router.post('/', sanitizeBody, async (req, res) => {
   let newGift = new Gift(req.sanitizedBody)
   try {
     await newGift.save()
-    res.status(201).json({ data: formatResponseData(newGift) })
+    res.status(201).json({ data: newGift })
   } catch (err) {
     debug(err)
     res.status(500).send({
@@ -28,7 +28,7 @@ router.post('/', sanitizeBody, async (req, res) => {
 })
 
 // update a gift
-router.patch('/:giftId', sanitizeBody, async (req, res) => {
+router.patch('/:giftId', sanitizeBody, async (req, res, next) => {
   try {
       const document = await Person.findByIdAndUpdate(
         req.params.id,
@@ -40,40 +40,21 @@ router.patch('/:giftId', sanitizeBody, async (req, res) => {
         }
       )
       if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-      res.send({ data: formatResponseData(document) })
+      res.send({ data: document })
     } catch (err) {
-      next(err)
+      next()
     }
 })
 
 // Remove a gift
-router.delete('/:giftId', async (req, res) => {
+router.delete('/:giftId', async (req, res, next) => {
   try {
     const gift = await Gift.findByIdAndRemove(req.params.id)
     if (!gift) throw new ResourceNotFoundError(`We could not find a gift with id: ${req.params.id}`)
-    res.json({ data: formatResponseData(gift) })
+    res.json({ data:gift })
   } catch (err) {
-    next(err)
+    next()
   }
 })
-
-/**
- * Format the response data object according to JSON:API v1.0
- * @param {string} type The resource collection name, e.g. 'gifts'
- * @param {Object | Object[]} payload An array or instance object from that collection
- * @returns
- */
-function formatResponseData(payload, type = 'gifts') {
-  if (payload instanceof Array) {
-    return payload.map((resource) => format(resource))
-  } else {
-    return format(payload)
-  }
-
-  function format(resource) {
-    const { _id, ...attributes } = resource.toObject()
-    return { type, id: _id, attributes }
-  }
-}
 
 export default router

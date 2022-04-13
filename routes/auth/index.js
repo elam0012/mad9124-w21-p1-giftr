@@ -23,7 +23,7 @@ router.get('/users/me', authenticate, async (req, res) => {
 })
 
 // update the password
-router.patch('/users/me', sanitizeBody, async (req, res) => {
+router.patch('/users/me', sanitizeBody, async (req, res, next) => {
   try {
       const document = await Person.findByIdAndUpdate(
         req.params.id,
@@ -35,9 +35,9 @@ router.patch('/users/me', sanitizeBody, async (req, res) => {
         }
       )
       if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-      res.send({ data: formatResponseData(document) })
+      res.send({ data: document })
     } catch (err) {
-      next(err)
+      next()
     }
 })
 
