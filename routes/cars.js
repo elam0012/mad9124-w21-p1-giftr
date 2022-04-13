@@ -1,6 +1,6 @@
 import createDebug from 'debug'
 import sanitizeBody from '../middleware/sanitizeBody.js'
-import {Car} from "../models/index.js"
+import {Gift} from "../models/index.js"
 import express from 'express'
 import ResourceNotFoundError from '../exceptions/ResourceNotFound.js'
 
@@ -8,15 +8,15 @@ const debug = createDebug('week9:routes:cars')
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-  const collection = await Car.find().populate('owner')
+  const collection = await Gift.find().populate('owner')
   res.send({ data: formatResponseData(collection) })
 })
 
 router.post('/', sanitizeBody, async (req, res) => {
-  let newCar = new Car(req.sanitizedBody)
+  let newGift = new Gift(req.sanitizedBody)
   try {
-    await newCar.save()
-    res.status(201).json({ data: formatResponseData(newCar) })
+    await newGift.save()
+    res.status(201).json({ data: formatResponseData(newGift) })
   } catch (err) {
     debug(err)
     res.status(500).send({
@@ -33,7 +33,7 @@ router.post('/', sanitizeBody, async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const car = await Car.findById(req.params.id).populate('owner')
+    const car = await Gift.findById(req.params.id).populate('owner')
     if (!car) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
     res.json({ data: formatResponseData(car) })
   } catch (err) {
@@ -45,7 +45,7 @@ const update =
   (overwrite = false) =>
   async (req, res) => {
     try {
-      const car = await Car.findByIdAndUpdate(
+      const car = await Gift.findByIdAndUpdate(
         req.params.id,
         req.sanitizedBody,
         {
@@ -65,7 +65,7 @@ router.patch('/:id', sanitizeBody, update(false))
 
 router.delete('/:id', async (req, res) => {
   try {
-    const car = await Car.findByIdAndRemove(req.params.id)
+    const car = await Gift.findByIdAndRemove(req.params.id)
     if (!car) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
     res.json({ data: formatResponseData(car) })
   } catch (err) {

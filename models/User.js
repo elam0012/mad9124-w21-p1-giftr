@@ -17,17 +17,14 @@ const schema = new mongoose.Schema({
     required: true,
     unique: true,
     set: value => value.toLowerCase(),
-    validate: { // is not working
+    validate: { 
       validator: value => validator.isEmail(value),
       message: props => `${props.value} is not a valid email address.`
     }
   },
   password: {type: String, trim: true, maxlength: 70, required: true},
 
-},
-{
-  timestamps: true
-  })
+})
 
 schema.methods.generateAuthToken = function() {
   const payload = {uid: this._id}

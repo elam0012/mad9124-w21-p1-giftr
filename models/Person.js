@@ -1,13 +1,15 @@
 import mongoose from 'mongoose'
 
 const schema = new mongoose.Schema({
-  name: {
-    first: { type: String, trim: true, maxlength: 64, required: true },
-    last: { type: String, trim: true, maxlength: 64, required: true },
-    nick: { type: String, trim: true, maxlength: 64 },
-  },
-  email: { type: String, trim: true, maxlength: 512 },
-  birthDate: { type: Date },
+  name: { type: String, trim: true, maxlength: 254, required: true },
+  birthDate: { type: Date, required: true },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },// add default current user
+  sharedWith: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}], 
+  gifts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Gift'}], // make sure
+  imageUrl: {type: String, maxlength: 1024} 
+},
+{
+  timestamps: true
 })
 
 const Model = mongoose.model('Person', schema)

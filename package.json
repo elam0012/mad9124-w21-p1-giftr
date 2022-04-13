@@ -1,7 +1,7 @@
 {
-  "name": "week8",
+  "name": "mad9124-gifter",
   "version": "0.1.0",
-  "description": "MAD9124 JWT Auth demo",
+  "description": "MAD9124 final project",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -14,8 +14,8 @@
     "jwt"
   ],
   "author": {
-    "name": "Robert L. McKenney",
-    "email": "mckennr@algonquincollege.com"
+    "name": "Nikunj & Yasir Elamin",
+    "email": "elam0012@algonquinlive.com"
   },
   "license": "ISC",
   "dependencies": {
