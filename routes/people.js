@@ -1,6 +1,6 @@
 import createDebug from 'debug'
 import sanitizeBody from '../middleware/sanitizeBody.js'
-import Person from '../models/Person.js'
+import {Person} from "../models/index.js"
 import express from 'express'
 import ResourceNotFoundError from '../exceptions/ResourceNotFound.js'
 

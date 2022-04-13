@@ -1,6 +1,5 @@
 
-
-import User from '../../models/User.js'
+import {User} from "../../models/index.js"
 import sanitizeBody from '../../middleware/sanitizeBody.js'
 import createDebug from 'debug'
 import express from 'express'
