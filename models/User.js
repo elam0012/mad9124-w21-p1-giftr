@@ -49,6 +49,11 @@ schema.pre('save', async function(next) {
   next()
 })
 
+schema.pre('findOneAndUpdate', async function(next) {
+  this._update.password = await bcrypt.hash(this._update.password, saltRounds)
+  next()
+})
+
 schema.methods.toJSON = function () {
   const obj = this.toObject()
   delete obj.password

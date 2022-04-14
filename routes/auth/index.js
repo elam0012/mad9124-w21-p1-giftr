@@ -23,22 +23,23 @@ router.get('/users/me', authenticate, async (req, res) => {
 })
 
 // update the password
-router.patch('/users/me', sanitizeBody, async (req, res, next) => {
+router.patch('/users/me', sanitizeBody, authenticate, async (req, res, next) => {
   try {
-      const document = await Person.findByIdAndUpdate(
-        req.params.id,
+      const document = await User.findByIdAndUpdate(
+        req.user._id,
         req.sanitizedBody,
         {
           new: true,
-          overwrite: true,
+          overwrite: false,
           runValidators: true,
         }
       )
       if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-      res.send({ data: document })
+      res.send({ data: "password updated successfully"})
     } catch (err) {
       next()
     }
+
 })
 
 // Login a user and return an authentication token.
