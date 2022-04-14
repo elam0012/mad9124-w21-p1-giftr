@@ -70,7 +70,7 @@ router.patch('/:id', sanitizeBody, update(false)) // update a person
 router.delete('/:id', async (req, res, next) => {
   try {
     const document = await Person.findByIdAndRemove(req.params.id)
-    if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
+    if (!document) throw new ResourceNotFoundError(`We could not find a person with id: ${req.params.id}`)
     res.send({ data:document })
   } catch (err) {
     next()
