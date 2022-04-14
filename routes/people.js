@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 // get details for a person
 router.get('/:id', async (req, res, next) => {
   try {
-    const document = await Person.findById(req.params.id)
+    const document = await Person.findById(req.params.id).populate("gifts")
     if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
     res.json({ data:document })
   } catch (err) {
