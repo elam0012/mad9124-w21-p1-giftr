@@ -4,12 +4,13 @@ import {Gift} from "../models/index.js"
 import express from 'express'
 import ResourceNotFoundError from '../exceptions/ResourceNotFound.js'
 import authenticate from '../middleware/auth.js'
+import validate from '../middleware/validation.js'
 
 const debug = createDebug('week9:routes:gifts')
 const router = express.Router()
 
 // create a gift
-router.post('/', sanitizeBody, async (req, res) => {
+router.post('/', sanitizeBody, authenticate, validate, async (req, res) => {
   let newGift = new Gift(req.sanitizedBody)
   try {
     await newGift.save()
@@ -29,7 +30,7 @@ router.post('/', sanitizeBody, async (req, res) => {
 })
 
 // update a gift
-router.patch('/:giftId', sanitizeBody, async (req, res, next) => {
+router.patch('/:giftId', sanitizeBody, authenticate, validate, async (req, res, next) => {
   try {
     // console.log(req.params.giftId)
       const document = await Gift.findByIdAndUpdate(
@@ -49,26 +50,8 @@ router.patch('/:giftId', sanitizeBody, async (req, res, next) => {
     }
 })
 
-// router.patch('/users/me', sanitizeBody, authenticate, async (req, res, next) => {
-//   try {
-//       const document = await User.findByIdAndUpdate(
-//         req.user._id,
-//         req.sanitizedBody,
-//         {
-//           new: true,
-//           overwrite: false,
-//           runValidators: true,
-//         }
-//       )
-//       if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
-//       res.send({ data: "password updated successfully"})
-//     } catch (err) {
-//       next()
-//     }
-// })
-
 // Remove a gift
-router.delete('/:giftId', async (req, res, next) => {
+router.delete('/:giftId', authenticate, validate, async (req, res, next) => {
   try {
     const gift = await Gift.findByIdAndRemove(req.params.giftId)
     if (!gift) throw new ResourceNotFoundError(`We could not find a gift with id: ${req.params.giftId}`)
