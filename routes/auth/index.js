@@ -34,12 +34,11 @@ router.patch('/users/me', sanitizeBody, authenticate, async (req, res, next) => 
           runValidators: true,
         }
       )
-      if (!document) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
+      if (!document) throw new ResourceNotFoundError(`We could not find a user with id: ${req.user._id}`)
       res.send({ data: "password updated successfully"})
     } catch (err) {
       next()
     }
-
 })
 
 // Login a user and return an authentication token.
