@@ -32,7 +32,6 @@ router.post('/', sanitizeBody, authenticate, validate, async (req, res) => {
 // update a gift
 router.patch('/:giftId', sanitizeBody, authenticate, validate, async (req, res, next) => {
   try {
-    // console.log(req.params.giftId)
       const document = await Gift.findByIdAndUpdate(
         req.params.giftId,
         req.sanitizedBody,
@@ -42,7 +41,6 @@ router.patch('/:giftId', sanitizeBody, authenticate, validate, async (req, res, 
           runValidators: true,
         }
       )
-      console.log(req.sanitizedBody)
       if (!document) throw new ResourceNotFoundError(`We could not find a gift with id: ${req.params.giftId}`)
       res.send({ data: document })
     } catch (err) {

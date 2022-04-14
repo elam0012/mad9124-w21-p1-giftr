@@ -65,8 +65,8 @@ const update =
       next()
     }
   }
-router.put('/:id', sanitizeBody,authenticate, validate, update(true)) // replace a person
-router.patch('/:id', sanitizeBody,authenticate, validate, update(false)) // update a person
+router.put('/:id', sanitizeBody, authenticate, validate, update(true)) // replace a person
+router.patch('/:id', sanitizeBody, authenticate, validate, update(false)) // update a person
 
 // remove a person
 router.delete('/:id', authenticate, validate, async (req, res, next) => {
