@@ -17,7 +17,7 @@ app.use(express.json())
 app.use(sanitizeMongo())
 
 // routes
-app.use('/api/people/:id/gifts', giftRouter)
+app.use('/api/people', giftRouter)
 app.use('/api/people', peopleRouter)
 app.use('/auth', authRouter)
 

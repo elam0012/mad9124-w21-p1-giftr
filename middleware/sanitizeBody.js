@@ -34,7 +34,7 @@ const stripTags = (payload) => {
 }
 
 export default function sanitizeBodyMiddleware(req, res, next) {
-  const { id, _id, ...attributes } = req.body
+  const { id, _id, owner, ...attributes } = req.body
   req.sanitizedBody = stripTags(attributes)
   next()
 }
