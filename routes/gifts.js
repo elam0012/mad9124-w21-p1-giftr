@@ -14,7 +14,8 @@ router.post('/:id/gifts', sanitizeBody, authenticate, validate, async (req, res)
   try {
     let newGift = new Gift(req.sanitizedBody)
     const person = await Person.findById(req.params.id)
-    if (JSON.stringify(person.owner) === JSON.stringify(req.user._id)) {
+    const isShared = Boolean(person.sharedWith.includes(req.user._id))
+    if (JSON.stringify(person.owner) === JSON.stringify(req.user._id) || isShared) {
       await newGift.save()
       res.status(201).json({ data: newGift })
       person.gifts.push(newGift)
@@ -37,7 +38,7 @@ router.post('/:id/gifts', sanitizeBody, authenticate, validate, async (req, res)
         {
           status: '500',
           title: 'Server error',
-          description: 'Problem saving document to the database.',
+          description: 'Problem saving gift to the database.',
         },
       ],
     })
@@ -48,7 +49,8 @@ router.post('/:id/gifts', sanitizeBody, authenticate, validate, async (req, res)
 router.patch('/:id/gifts/:giftId', sanitizeBody, authenticate, validate, async (req, res, next) => {
   try {
     const person = await Person.findById(req.params.id)
-    if (JSON.stringify(person.owner) === JSON.stringify(req.user._id)) {
+    const isShared = Boolean(person.sharedWith.includes(req.user._id))
+    if (JSON.stringify(person.owner) === JSON.stringify(req.user._id) || isShared) {
       const gift = await Gift.findByIdAndUpdate(
         req.params.giftId,
         req.sanitizedBody,
@@ -83,7 +85,8 @@ router.patch('/:id/gifts/:giftId', sanitizeBody, authenticate, validate, async (
 router.delete('/:id/gifts/:giftId', authenticate, validate, async (req, res, next) => {
   try {
     const person = await Person.findById(req.params.id)
-    if (JSON.stringify(person.owner) === JSON.stringify(req.user._id)) {
+    const isShared = Boolean(person.sharedWith.includes(req.user._id))
+    if (JSON.stringify(person.owner) === JSON.stringify(req.user._id) || isShared) {
     const gift = await Gift.findByIdAndRemove(req.params.giftId)
     if (!gift) throw new ResourceNotFoundError(`We could not find a gift with id: ${req.params.giftId}`)
     res.json({ data:gift })
