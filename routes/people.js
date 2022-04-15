@@ -24,7 +24,7 @@ router.get('/:id', authenticate, validate, async (req, res, next) => {
       if (!person) throw new ResourceNotFoundError(`We could not find a car with id: ${req.params.id}`)
       res.json({ data:person })
     } else {
-        res.status(500).send({
+        res.status(400).send({
           errors: [
             {
               status: '400',
@@ -79,7 +79,7 @@ const update =
       if (!person) throw new ResourceNotFoundError(`We could not find a person with id: ${req.params.id}`)
       res.send({ data: person })
       } else {
-        res.status(500).send({
+        res.status(400).send({
           errors: [
             {
               status: '400',
@@ -105,7 +105,7 @@ router.delete('/:id', authenticate, validate, async (req, res, next) => {
       if (!person) throw new ResourceNotFoundError(`We could not find a person with id: ${req.params.id}`)
       res.send({ data:person})
     } else {
-        res.status(500).send({
+        res.status(400).send({
           errors: [
             {
               status: '400',

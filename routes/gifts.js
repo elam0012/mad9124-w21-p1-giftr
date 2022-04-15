@@ -21,7 +21,7 @@ router.post('/:id/gifts', sanitizeBody, authenticate, validate, async (req, res)
       person.gifts.push(newGift)
       await person.save()
   } else {
-    res.status(500).send({
+    res.status(400).send({
       errors: [
         {
           status: '400',
@@ -66,7 +66,7 @@ router.patch('/:id/gifts/:giftId', sanitizeBody, authenticate, validate, async (
       if (!gift) throw new ResourceNotFoundError(`We could not find a gift with id: ${req.params.giftId}`)
       res.send({ data: gift })
     } else {
-    res.status(500).send({
+    res.status(400).send({
       errors: [
         {
           status: '400',
@@ -91,7 +91,7 @@ router.delete('/:id/gifts/:giftId', authenticate, validate, async (req, res, nex
     if (!gift) throw new ResourceNotFoundError(`We could not find a gift with id: ${req.params.giftId}`)
     res.json({ data:gift })
   } else {
-    res.status(500).send({
+    res.status(400).send({
       errors: [
         {
           status: '400',
