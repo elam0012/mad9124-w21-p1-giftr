@@ -4,13 +4,12 @@ import sanitizeBody from '../../middleware/sanitizeBody.js'
 import createDebug from 'debug'
 import express from 'express'
 import authenticate from '../../middleware/auth.js'
-import validate from '../../middleware/validation.js'
 
 const debug = createDebug('week8:auth')
 const router = express.Router()
 
 // Register a new user
-router.post('/users', sanitizeBody, validate, (req, res, next) => {
+router.post('/users', sanitizeBody, (req, res, next) => {
   new User(req.sanitizedBody)
     .save()
     .then(newUser => res.status(201).send({ data: newUser }))
@@ -18,13 +17,13 @@ router.post('/users', sanitizeBody, validate, (req, res, next) => {
 })
 
 // Get the currently logged-in user
-router.get('/users/me', authenticate, validate, async (req, res) => {
+router.get('/users/me', authenticate, async (req, res) => {
   const user = await User.findById(req.user._id)
   res.send({ data: user })
 })
 
 // update the password
-router.patch('/users/me', sanitizeBody, authenticate, validate, async (req, res, next) => {
+router.patch('/users/me', sanitizeBody, authenticate, async (req, res, next) => {
   try {
       const document = await User.findByIdAndUpdate(
         req.user._id,
@@ -43,7 +42,7 @@ router.patch('/users/me', sanitizeBody, authenticate, validate, async (req, res,
 })
 
 // Login a user and return an authentication token.
-router.post('/tokens', sanitizeBody, validate, async (req, res) => {
+router.post('/tokens', sanitizeBody, async (req, res) => {
   const {email, password} = req.sanitizedBody
   const user = await User.authenticate(email, password)
 
