@@ -45,7 +45,6 @@ router.patch('/users/me', sanitizeBody, authenticate, async (req, res, next) => 
 router.post('/tokens', sanitizeBody, async (req, res) => {
   const {email, password} = req.sanitizedBody
   const user = await User.authenticate(email, password)
-
   if (!user) {
     return res.status(401).send({
       errors: [
@@ -57,7 +56,7 @@ router.post('/tokens', sanitizeBody, async (req, res) => {
     })
   }
 
-  res.status(201).send({data: {token: user.generateAuthToken()}})
+  res.status(200).send({data: {token: user.generateAuthToken()}})
 })
 
 export default router
