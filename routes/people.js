@@ -12,7 +12,7 @@ const router = express.Router()
 // list all people
 router.get('/', authenticate, validate, async (req, res) => {
   const people = await Person.find({owner: req.user._id}).select('-gifts')
-  res.send({ data: people })
+  res.status(200).send({ data: people })
 })
 
 // get details for a person
