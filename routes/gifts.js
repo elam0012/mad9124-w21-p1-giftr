@@ -89,7 +89,10 @@ router.delete('/:id/gifts/:giftId', authenticate, validate, async (req, res, nex
     if (JSON.stringify(person.owner) === JSON.stringify(req.user._id) || isShared) {
     const gift = await Gift.findByIdAndRemove(req.params.giftId)
     if (!gift) throw new ResourceNotFoundError(`We could not find a gift with id: ${req.params.giftId}`)
-    res.json({ data:gift })
+    res.status(200).json({ data:gift })
+    const giftToDelete  = person.gifts.findIndex(gift => gift.id === req.params.giftId)
+    person.gifts.splice(giftToDelete,1)
+    await person.save()
   } else {
     res.status(400).send({
       errors: [
