@@ -77,7 +77,7 @@ const update =
         }
       )
       if (!person) throw new ResourceNotFoundError(`We could not find a person with id: ${req.params.id}`)
-      res.send({ data: person })
+      res.status(200).send({ data: person })
       } else {
         res.status(400).send({
           errors: [
@@ -103,7 +103,7 @@ router.delete('/:id', authenticate, validate, async (req, res, next) => {
     if (JSON.stringify(person.owner) === JSON.stringify(req.user._id)) {
       const person = await Person.findByIdAndRemove(req.params.id)
       if (!person) throw new ResourceNotFoundError(`We could not find a person with id: ${req.params.id}`)
-      res.send({ data:person})
+      res.status(200).send({ data:person})
     } else {
         res.status(400).send({
           errors: [
